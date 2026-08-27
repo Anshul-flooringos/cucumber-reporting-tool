@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gherkin Press | Cucumber report to PDF</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Gherkin Press home"><span class="brand-mark">G</span><span>gherkin <em>press</em></span></a>
+      <div class="topbar-meta"><span class="status-dot"></span><span id="engineStatus">Ready for a report</span><span class="version">v1.0</span></div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <p class="eyebrow">Cucumber report publisher</p>
+        <h1>Turn your test run<br><span>into a keepsake.</span></h1>
+        <p class="lede">Drop in the complete report ZIP. We’ll gather every feature, scenario, step, and attachment into one tidy PDF your team can actually read.</p>
+      </div>
+      <div class="intro-note"><span class="note-number">01</span><span>Local processing.<br>Your report stays here.</span></div>
+    </section>
+
+    <section class="workspace">
+      <div class="drop-panel" id="dropPanel">
+        <input type="file" id="fileInput" accept=".zip,application/zip" hidden />
+        <div class="drop-copy">
+          <div class="upload-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+          <p class="drop-title">Drop your cucumber ZIP here</p>
+          <p class="drop-subtitle">or <button class="text-button" id="browseButton" type="button">browse files</button> from your computer</p>
+          <p class="drop-hint">ZIP up to 100 MB <span>•</span> JSON, HTML, screenshots supported</p>
+        </div>
+        <div class="drop-corner">PDF<br>READY</div>
+      </div>
+
+      <div class="report-panel" id="reportPanel" aria-live="polite">
+        <div class="panel-heading"><div><p class="eyebrow">Report preview</p><h2 id="reportTitle">Awaiting your ZIP</h2></div><span class="panel-badge" id="reportBadge">No file</span></div>
+        <div class="empty-state" id="emptyState"><div class="empty-lines"><i></i><i></i><i></i></div><p>Your report preview will appear here.</p><span>We’ll detect the Cucumber JSON automatically.</span></div>
+        <div class="report-content hidden" id="reportContent">
+          <div class="metric-grid">
+            <div class="metric"><span>Scenarios</span><strong id="scenarioCount">0</strong></div>
+            <div class="metric"><span>Passed</span><strong class="green" id="passedCount">0</strong></div>
+            <div class="metric"><span>Failed</span><strong class="red" id="failedCount">0</strong></div>
+            <div class="metric"><span>Duration</span><strong id="durationCount">0s</strong></div>
+          </div>
+          <div class="progress-track"><span id="passProgress"></span></div>
+          <div class="progress-label"><span id="progressLabel">0% pass rate</span><span id="featureCount">0 features</span></div>
+          <div class="feature-list" id="featureList"></div>
+          <button class="primary-button" type="button" id="exportButton"><span class="button-icon">↓</span> Export report PDF</button>
+          <button class="primary-button" type="button" id="htmlExportButton"><span class="button-icon">↗</span> Export responsive HTML</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-it-works"><p class="eyebrow">What gets included</p><div class="inclusion-grid"><div><span>01</span><strong>Full run summary</strong><p>Pass rate, duration, and totals at a glance.</p></div><div><span>02</span><strong>Feature detail</strong><p>Every scenario and step, grouped for scanning.</p></div><div><span>03</span><strong>Evidence</strong><p>Attachment names and failure messages stay attached.</p></div></div></section>
+    <footer><span>GHERKIN PRESS</span><span>Runs locally in your browser</span><span id="footerDate"></span></footer>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
