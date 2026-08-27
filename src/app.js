@@ -124,13 +124,19 @@ function exportHtml() {
   const blob = new Blob([html], { type: 'text/html' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `${currentReport.fileName.replace(/\.zip$/i, '')}-responsive.html`;
+  link.download = `daily-report-html-${getExportTimestamp()}.html`;
   link.click();
   URL.revokeObjectURL(link.href);
   showToast('Responsive HTML exported successfully.');
 }
 
 function addNavigationBridge(html) { return html.replace('</body>', '<script>document.addEventListener("click",event=>{const link=event.target.closest("[href^=\'#report:\']");if(link){event.preventDefault();parent.postMessage({reportPath:link.getAttribute("href").slice(8)},"*");}});</script></body>'); }
+
+function getExportTimestamp() {
+  const now = new Date();
+  const pad = value => String(value).padStart(2, '0');
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+}
 
 function bindReportNavigation() {
   const frame = document.querySelector('#reportFrame');
