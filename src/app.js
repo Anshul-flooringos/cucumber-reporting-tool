@@ -21,7 +21,11 @@ async function handleFolder(files) {
   if (!files?.length) return;
   setStatus('Reading artifacts folder...');
   try {
-    const entries = [...files].map(file => ({ name: file.webkitRelativePath || file.name, dir: false, async: () => file }));
+    const entries = [...files].map(file => ({
+      name: file.webkitRelativePath || file.name,
+      dir: false,
+      async: type => type === 'text' ? file.text() : Promise.resolve(file)
+    }));
     const indexEntry = entries.find(entry => /(^|\/)index\.html?$/i.test(entry.name));
     if (!indexEntry) throw new Error('No index HTML found');
     currentReport = { fileName: files[0].webkitRelativePath.split('/')[0], ...await createReportPage(entries, indexEntry) };
