@@ -4,6 +4,8 @@ Gherkin Press converts a complete Cucumber HTML report ZIP into a browser-viewab
 
 The tool runs locally in the browser. The ZIP is processed client-side and is not uploaded to a server.
 
+For the complete developer onboarding guide, see [docs/README.md](docs/README.md).
+
 ## What It Does
 
 1. Accepts a Cucumber report ZIP by drag and drop or file selection.
