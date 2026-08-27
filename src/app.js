@@ -5,6 +5,7 @@ const emptyState = document.querySelector('#emptyState');
 const toast = document.querySelector('#toast');
 let currentReport = null;
 
+// Connect the upload surface and export controls when the app starts.
 document.querySelector('#footerDate').textContent = new Date().getFullYear();
 document.querySelector('#browseButton').addEventListener('click', () => fileInput.click());
 document.querySelector('#htmlExportButton').addEventListener('click', exportHtml);
@@ -14,6 +15,7 @@ fileInput.addEventListener('change', event => handleFile(event.target.files[0]))
 dropPanel.addEventListener('drop', event => handleFile(event.dataTransfer.files[0]));
 
 async function handleFile(file) {
+  // Validate the input before loading the archive into browser memory.
   if (!file) return;
   if (!file.name.toLowerCase().endsWith('.zip')) return showToast('Please choose a .zip cucumber report.');
   if (file.size > 100 * 1024 * 1024) return showToast('That ZIP is larger than 100 MB.');
@@ -34,6 +36,7 @@ async function handleFile(file) {
 }
 
 async function createReportPage(entries, indexEntry) {
+  // Convert every ZIP asset to an embedded URL before rewriting HTML references.
   const urls = new Map();
   const entryMap = new Map(entries.map(entry => [normalizePath(entry.name), entry]));
   for (const entry of entries) {
@@ -67,12 +70,14 @@ async function createReportPage(entries, indexEntry) {
   documentCopy.querySelectorAll('[srcset]').forEach(element => { element.setAttribute('srcset', rewriteSrcset(element.getAttribute('srcset'), indexPath, urls)); });
   documentCopy.querySelectorAll('[xlink\\:href]').forEach(element => { const mapped = resolveArchiveUrl(element.getAttribute('xlink:href'), indexPath, urls); if (mapped) element.setAttribute('xlink:href', mapped); });
   addStatusIconFallback(documentCopy);
+  // Prepare the index and every linked HTML page for in-browser navigation.
   const pages = { [indexPath]: `<!doctype html>${documentCopy.documentElement.outerHTML}` };
   for (const entry of entries.filter(item => /\.html?$/i.test(item.name) && normalizePath(item.name) !== indexPath)) pages[normalizePath(entry.name)] = await buildReportHtml(entry, { urls, entryMap });
   return { html: pages[indexPath], pages, urls, entryMap, indexPath };
 }
 
 function renderReport(report) {
+  // Show the original report inside a responsive iframe.
   emptyState.classList.add('hidden');
   reportContent.classList.remove('hidden');
   document.querySelector('#reportTitle').textContent = report.fileName.replace(/\.zip$/i, '');
@@ -88,6 +93,7 @@ function renderReport(report) {
 }
 
 function exportHtml() {
+  // Build one standalone HTML file containing all report pages and assets.
   if (!currentReport) return showToast('Upload a report ZIP first.');
   const pages = Object.fromEntries(Object.entries(currentReport.pages).map(([path, html]) => [path, addNavigationBridge(html)]));
   const serializedPages = JSON.stringify(pages).replace(/</g, '\\u003c');
@@ -114,6 +120,7 @@ function bindReportNavigation() {
 }
 
 async function buildReportHtml(entry, report) {
+  // Rewrite a linked report page using the same embedded assets as the index.
   const documentCopy = new DOMParser().parseFromString(await entry.async('text'), 'text/html');
   const sourcePath = normalizePath(entry.name);
   documentCopy.querySelectorAll('[src], [href]').forEach(element => {
@@ -136,6 +143,7 @@ async function buildReportHtml(entry, report) {
 }
 
 async function exportPdf() {
+  // Render every HTML page and split tall pages into printable A4 sections.
   if (!currentReport) return;
   const button = document.querySelector('#exportButton');
   const frame = document.querySelector('#reportFrame');
@@ -172,12 +180,14 @@ function addCanvasPages(pdf, canvas, addPageBefore) {
 }
 
 function normalizePath(path) {
+  // Normalize ZIP paths so nested relative links resolve consistently.
   const parts = path.replace(/\\/g, '/').split('/');
   const normalized = [];
   parts.forEach(part => { if (!part || part === '.') return; if (part === '..') normalized.pop(); else normalized.push(part); });
   return normalized.join('/');
 }
 function resolveArchiveUrl(value, sourcePath, urls) {
+  // Map a report-relative URL while preserving SVG fragments.
   if (!value || /^(data:|blob:|https?:|mailto:|javascript:)/i.test(value)) return null;
   const match = value.match(/^([^?#]+)([?#].*)?$/);
   if (!match) return null;
@@ -191,6 +201,7 @@ function rewriteCssUrls(css, sourcePath, urls) {
     .replace(/@import\s+(['"])([^'"]+)\1/gi, (match, quote, value) => { const mapped = resolveArchiveUrl(value, sourcePath, urls); return mapped ? `@import ${quote}${mapped}${quote}` : match; });
 }
 function rewriteSrcset(srcset, sourcePath, urls) { return srcset.split(',').map(item => { const parts = item.trim().split(/\s+/); const mapped = resolveArchiveUrl(parts[0], sourcePath, urls); if (mapped) parts[0] = mapped; return parts.join(' '); }).join(', '); }
+// Keep status icons visible when a report's external icon font cannot load offline.
 function addStatusIconFallback(documentCopy) { const style = documentCopy.createElement('style'); style.textContent = '[class*="fa-check"]:before,[class*="glyphicon-ok"]:before{content:"✓"!important;font-family:Arial,sans-serif!important}[class*="fa-times"]:before,[class*="glyphicon-remove"]:before{content:"×"!important;font-family:Arial,sans-serif!important}[class*="fa-exclamation"]:before,[class*="glyphicon-warning"]:before{content:"!"!important;font-family:Arial,sans-serif!important}'; documentCopy.head.appendChild(style); }
 function blobToDataUrl(blob) { return new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsDataURL(blob); }); }
 function escapeAttribute(value) { return String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
