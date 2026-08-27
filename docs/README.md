@@ -80,12 +80,12 @@ Keep the terminal running while using the app. Stop the server with `Ctrl+C`.
 6. Use the report navigation and test-case links.
 7. Export responsive HTML for interactive use or PDF for fixed-page sharing.
 
-The ZIP must contain an `index.html` file. It may be at the ZIP root or inside nested folders.
+The ZIP or selected folder must contain an `index.html` file. It may be at the source root or inside nested folders.
 
 ## How the Code Works
 
 1. `src/app.js` receives the selected ZIP file.
-2. JSZip reads the archive in the browser.
+2. JSZip reads ZIP archives in the browser; folder selection supplies files with their relative paths.
 3. The app locates the archive's `index.html`.
 4. Every local asset is converted to an embedded data URL.
 5. Relative references for CSS, images, fonts, SVG icons, and scripts are rewritten.
@@ -95,11 +95,15 @@ The ZIP must contain an `index.html` file. It may be at the ZIP root or inside n
 
 The tool does not send the report to a backend and does not reconstruct the report from JSON. The original Cucumber HTML is preserved as the source of truth.
 
+### Selecting a Folder
+
+Use **select artifacts folder** when the report already exists as a directory. The browser's folder picker is dynamic and user-controlled, so no fixed path needs to be configured. A browser cannot access an arbitrary filesystem path typed into the app without a user selecting or granting access to that folder.
+
 ## Project Structure
 
-```text
+1. `src/app.js` receives either the selected ZIP or the selected artifacts folder.
 cucumber-pdf-tool/
-├── index.html       # App shell and CDN library references
+3. The app locates the source `index.html`.
 ├── src/
 │   ├── app.js       # ZIP processing, navigation, and exports
 │   └── styles.css   # App shell styling

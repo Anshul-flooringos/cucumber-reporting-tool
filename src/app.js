@@ -1,5 +1,6 @@
 const dropPanel = document.querySelector('#dropPanel');
 const fileInput = document.querySelector('#fileInput');
+const folderInput = document.querySelector('#folderInput');
 const reportContent = document.querySelector('#reportContent');
 const emptyState = document.querySelector('#emptyState');
 const toast = document.querySelector('#toast');
@@ -8,11 +9,29 @@ let currentReport = null;
 // Connect the upload surface and export controls when the app starts.
 document.querySelector('#footerDate').textContent = new Date().getFullYear();
 document.querySelector('#browseButton').addEventListener('click', () => fileInput.click());
+document.querySelector('#folderButton').addEventListener('click', () => folderInput.click());
 document.querySelector('#htmlExportButton').addEventListener('click', exportHtml);
 fileInput.addEventListener('change', event => handleFile(event.target.files[0]));
+folderInput.addEventListener('change', event => handleFolder(event.target.files));
 ['dragenter', 'dragover'].forEach(name => dropPanel.addEventListener(name, event => { event.preventDefault(); dropPanel.classList.add('dragging'); }));
 ['dragleave', 'drop'].forEach(name => dropPanel.addEventListener(name, event => { event.preventDefault(); dropPanel.classList.remove('dragging'); }));
 dropPanel.addEventListener('drop', event => handleFile(event.dataTransfer.files[0]));
+
+async function handleFolder(files) {
+  if (!files?.length) return;
+  setStatus('Reading artifacts folder...');
+  try {
+    const entries = [...files].map(file => ({ name: file.webkitRelativePath || file.name, dir: false, async: () => file }));
+    const indexEntry = entries.find(entry => /(^|\/)index\.html?$/i.test(entry.name));
+    if (!indexEntry) throw new Error('No index HTML found');
+    currentReport = { fileName: files[0].webkitRelativePath.split('/')[0], ...await createReportPage(entries, indexEntry) };
+    renderReport(currentReport);
+    setStatus('Report ready to publish');
+  } catch (error) {
+    setStatus('Ready for a report');
+    showToast(error.message.includes('index') ? 'No index.html was found in that folder.' : 'Could not read that artifacts folder.');
+  }
+}
 
 async function handleFile(file) {
   // Validate the input before loading the archive into browser memory.

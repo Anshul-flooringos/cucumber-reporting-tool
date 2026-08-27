@@ -28,11 +28,12 @@
     <section class="workspace">
       <div class="drop-panel" id="dropPanel">
         <input type="file" id="fileInput" accept=".zip,application/zip" hidden />
+        <input type="file" id="folderInput" webkitdirectory directory multiple hidden />
         <div class="drop-copy">
           <div class="upload-icon" aria-hidden="true"><span></span><span></span><span></span></div>
           <p class="drop-title">Drop your cucumber ZIP here</p>
-          <p class="drop-subtitle">or <button class="text-button" id="browseButton" type="button">browse files</button> from your computer</p>
-          <p class="drop-hint">ZIP up to 100 MB <span>•</span> JSON, HTML, screenshots supported</p>
+          <p class="drop-subtitle">or <button class="text-button" id="browseButton" type="button">browse files</button> or <button class="text-button" id="folderButton" type="button">select artifacts folder</button></p>
+          <p class="drop-hint">ZIP or local folder <span>•</span> HTML, screenshots, fonts supported</p>
         </div>
         <div class="drop-corner">PDF<br>READY</div>
       </div>

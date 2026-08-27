@@ -9,13 +9,14 @@ For the complete developer onboarding guide, see [docs/README.md](docs/README.md
 ## What It Does
 
 1. Accepts a Cucumber report ZIP by drag and drop or file selection.
-2. Finds the report's `index.html` file inside the archive.
-3. Reads all files from the ZIP and embeds local assets as data URLs.
-4. Rewrites relative asset references so stylesheets, images, fonts, SVG icons, and other resources continue to work.
-5. Displays the original report layout inside the preview.
-6. Keeps links between report HTML pages working inside the preview.
-7. Exports a responsive, self-contained HTML report.
-8. Exports the rendered report as a multipage PDF.
+2. Accepts a locally selected artifacts folder with its complete relative file structure.
+3. Finds the report's `index.html` file in the selected source.
+4. Reads all files and embeds local assets as data URLs.
+5. Rewrites relative asset references so stylesheets, images, fonts, SVG icons, and other resources continue to work.
+6. Displays the original report layout inside the preview.
+7. Keeps links between report HTML pages working inside the preview.
+8. Exports a responsive, self-contained HTML report.
+9. Exports the rendered report as a multipage PDF.
 
 The report's own `index.html` is used as the source of truth. The application does not rebuild the report from Cucumber JSON, so the original report format is retained.
 
@@ -115,7 +116,7 @@ cucumber-pdf-tool/
 
 ## Limitations
 
-- The ZIP must contain an `index.html` file.
+- The ZIP or selected folder must contain an `index.html` file.
 - The browser must be able to load the CDN libraries used by the app.
 - PDF pages are fixed and are not responsive.
 - Very large reports may require more browser memory during HTML rendering and PDF generation.
