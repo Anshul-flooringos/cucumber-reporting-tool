@@ -98,13 +98,18 @@ The browser loads these libraries from jsDelivr at runtime:
 
 An internet connection is needed when the app first loads these CDN libraries. The report ZIP itself is processed locally.
 
-## Project Files
+## Project Structure
 
-- `index.html` - Application interface and CDN library references
-- `styles.css` - Gherkin Press application styling
-- `app.js` - ZIP loading, asset embedding, report navigation, HTML export, and PDF export
-- `package.json` - Local development script
-- `.gitignore` - Excludes dependencies and local environment files
+```text
+cucumber-pdf-tool/
+├── index.html       # Application entry page and CDN library references
+├── src/
+│   ├── app.js       # ZIP loading, asset embedding, navigation, and exports
+│   └── styles.css   # Gherkin Press application styling
+├── package.json     # Local development script
+├── README.md        # Setup and usage documentation
+└── .gitignore       # Local dependency and environment exclusions
+```
 
 ## Limitations
 
